@@ -4,10 +4,14 @@ const successMessage = document.getElementById('success-message');
 const departamentoSelect = document.getElementById('departamento');
 const provinciaSelect = document.getElementById('provincia');
 
-// Datos para provincias por departamento
+// Datos de departamentos y provincias del Perú
 const provinciasPorDepartamento = {
-    "Departamento 1": ["Provincia 1A", "Provincia 1B", "Provincia 1C"],
-    "Departamento 2": ["Provincia 2A", "Provincia 2B", "Provincia 2C"]
+    "Amazonas": ["Chachapoyas", "Bagua", "Bongará", "Condorcanqui", "Luya", "Rodríguez de Mendoza", "Utcubamba"],
+    "Áncash": ["Huaraz", "Aija", "Antonio Raimondi", "Asunción", "Bolognesi", "Carhuaz", "Carlos Fermín Fitzcarrald", "Casma", "Corongo", "Huari", "Huarmey", "Huaylas", "Mariscal Luzuriaga", "Ocros", "Pallasca", "Pomabamba", "Recuay", "Santa", "Sihuas", "Yungay"],
+    "Apurímac": ["Abancay", "Andahuaylas", "Antabamba", "Aymaraes", "Cotabambas", "Chincheros", "Grau"],
+    "Arequipa": ["Arequipa", "Camana", "Caraveli", "Castilla", "Caylloma", "Condesuyos", "Islay", "La Unión"],
+    "Ayacucho": ["Huamanga", "Cangallo", "Huanca Sancos", "Huanta", "La Mar", "Lucanas", "Parinacochas", "Páucar del Sara Sara", "Sucre", "Víctor Fajardo", "Vilcas Huamán"],
+    // Agrega más departamentos y provincias según sea necesario
 };
 
 // Manejo del cambio en el departamento
