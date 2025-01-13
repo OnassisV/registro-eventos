@@ -57,3 +57,31 @@ button:hover {
     color: red;
     margin-top: 10px;
 }
+
+.form-container {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    text-align: left;
+    width: 500px;
+    margin: 20px auto;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.button-container {
+    display: flex;
+    justify-content: space-between;
+}
+
+#success-message {
+    color: green;
+    text-align: center;
+    margin-top: 10px;
+}
