@@ -1,9 +1,20 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const fs = require('fs');
 const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 
 const app = express();
+
+// Configuración de CORS
+const corsOptions = {
+    origin: 'https://onassisv.github.io', // Dominio permitido
+    methods: ['GET', 'POST'],             // Métodos permitidos
+    allowedHeaders: ['Content-Type'],     // Encabezados permitidos
+};
+app.use(cors(corsOptions));
+
+// Configuración de middleware
 app.use(bodyParser.json());
 
 // Ruta del archivo CSV
@@ -27,12 +38,12 @@ if (!fs.existsSync(filePath)) {
     csvWriter.writeRecords([]);
 }
 
-// Ruta para recibir datos del formulario
+// Ruta para guardar datos en un archivo CSV
 app.post('/guardar-registro', async (req, res) => {
-    console.log('Datos recibidos:', req.body); // <-- Depuración
     const nuevoRegistro = req.body;
 
     try {
+        // Agregar un nuevo registro al archivo CSV
         await csvWriter.writeRecords([nuevoRegistro]);
         res.status(200).send({ mensaje: 'Registro guardado exitosamente.' });
     } catch (error) {
@@ -46,7 +57,3 @@ const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
-
-// agrega este middleware al servidor
-const cors = require('cors');
-app.use(cors());
