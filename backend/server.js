@@ -32,8 +32,10 @@ const csvWriter = createCsvWriter({
 
 // Guardar registro en el CSV
 app.post('/guardar-registro', async (req, res) => {
+    const nuevoRegistro = req.body;
+
     try {
-        await csvWriter.writeRecords([req.body]);
+        await csvWriter.writeRecords([nuevoRegistro]);
         res.status(200).send({ mensaje: 'Registro guardado exitosamente.' });
     } catch (error) {
         console.error('Error al guardar registro:', error);

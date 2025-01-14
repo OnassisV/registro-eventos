@@ -74,7 +74,7 @@ form.addEventListener('submit', async function (event) {
     };
 
     try {
-        const response = await fetch('/guardar-registro', {
+        const response = await fetch('http://localhost:3000/guardar-registro', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(evento),
