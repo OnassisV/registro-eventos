@@ -108,7 +108,7 @@ form.addEventListener('submit', async function (event) {
     const fechaRetorno = document.getElementById('fecha-retorno').value;
     const asistentes = Array.from(
         document.querySelectorAll('#asistentes-container input:checked')
-    ).map(input => input.value);
+    ).map(input => input.value).join(', ');
     const departamento = departamentoSelect.value;
     const provincia = provinciaSelect.value;
     const temas = document.getElementById('temas').value;
@@ -124,7 +124,7 @@ form.addEventListener('submit', async function (event) {
     };
 
     try {
-        // Enviar datos al servidor
+        // Enviar datos al backend
         const response = await fetch('/guardar-registro', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -146,6 +146,7 @@ form.addEventListener('submit', async function (event) {
         console.error('Error al conectar con el servidor:', error);
     }
 });
+
 </script>
 </body>
 </html>
