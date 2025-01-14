@@ -7,61 +7,33 @@ const createCsvWriter = require('csv-writer').createObjectCsvWriter;
 const app = express();
 
 // Configuración de CORS
-const corsOptions = {
-    origin: 'https://onassisv.github.io', // Dominio permitido
-    methods: ['GET', 'POST'],             // Métodos permitidos
-    allowedHeaders: ['Content-Type'],     // Encabezados permitidos
-};
-app.use(cors(corsOptions));
-
-// Configuración de middleware
+app.use(cors());
 app.use(bodyParser.json());
 
 // Ruta del archivo CSV
 const filePath = 'registros.csv';
 
-// Crear el escritor de CSV con encabezados
+// Configuración para anexar registros
 const csvWriter = createCsvWriter({
     path: filePath,
+    append: fs.existsSync(filePath),
     header: [
-        { id: 'fechaPartida', title: 'Fecha de Partida' },
-        { id: 'fechaRetorno', title: 'Fecha de Retorno' },
-        { id: 'asistentes', title: 'Asistentes' },
-        { id: 'departamento', title: 'Departamento' },
-        { id: 'provincia', title: 'Provincia' },
-        { id: 'temas', title: 'Temas Tratados' },
+        { id: 'FECHA_DE_PARTIDA', title: 'FECHA DE PARTIDA' },
+        { id: 'FECHA_DE_RETORNO', title: 'FECHA DE RETORNO' },
+        { id: 'RESPONSABLE', title: 'RESPONSABLE' },
+        { id: 'NOMBRE_DE_LA_ACTIVIDAD', title: 'NOMBRE DE LA ACTIVIDAD' },
+        { id: 'ASISTENTES', title: 'ASISTENTES' },
+        { id: 'DEPARTAMENTO', title: 'DEPARTAMENTO' },
+        { id: 'PROVINCIA', title: 'PROVINCIA' },
+        { id: 'SALIDA_A_REGIONES', title: 'SALIDA A REGIONES' },
+        { id: 'TEMAS_TRATADOS', title: 'TEMAS TRATADOS' },
     ],
 });
 
-// Asegurarse de que el archivo CSV tenga encabezados
-if (!fs.existsSync(filePath)) {
-    csvWriter.writeRecords([]);
-}
-
-// Ruta para guardar datos en un archivo CSV
+// Guardar registro en el CSV
 app.post('/guardar-registro', async (req, res) => {
-    const nuevoRegistro = req.body;
-
     try {
-        // Verificar si el archivo ya existe
-        const existeArchivo = fs.existsSync(filePath);
-
-        // Crear un escritor de CSV dinámico (sin sobrescribir encabezados)
-        const csvWriter = createCsvWriter({
-            path: filePath,
-            append: existeArchivo, // Añadir al archivo si ya existe
-            header: [
-                { id: 'fechaPartida', title: 'Fecha de Partida' },
-                { id: 'fechaRetorno', title: 'Fecha de Retorno' },
-                { id: 'asistentes', title: 'Asistentes' },
-                { id: 'departamento', title: 'Departamento' },
-                { id: 'provincia', title: 'Provincia' },
-                { id: 'temas', title: 'Temas Tratados' },
-            ],
-        });
-
-        // Agregar el nuevo registro al archivo CSV
-        await csvWriter.writeRecords([nuevoRegistro]);
+        await csvWriter.writeRecords([req.body]);
         res.status(200).send({ mensaje: 'Registro guardado exitosamente.' });
     } catch (error) {
         console.error('Error al guardar registro:', error);
@@ -70,7 +42,6 @@ app.post('/guardar-registro', async (req, res) => {
 });
 
 // Iniciar el servidor
-const PORT = 3000;
-app.listen(PORT, () => {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+app.listen(3000, () => {
+    console.log('Servidor corriendo en http://localhost:3000');
 });
