@@ -125,10 +125,10 @@ form.addEventListener('submit', async function (event) {
 
     try {
         // Enviar datos al backend
-        const response = await fetch('/guardar-registro', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(evento),
+        const response = await fetch('http://localhost:3000/guardar-registro', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(evento),
         });
 
         if (response.ok) {

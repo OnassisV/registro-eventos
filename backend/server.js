@@ -29,10 +29,10 @@ if (!fs.existsSync(filePath)) {
 
 // Ruta para recibir datos del formulario
 app.post('/guardar-registro', async (req, res) => {
+    console.log('Datos recibidos:', req.body); // <-- Depuración
     const nuevoRegistro = req.body;
 
     try {
-        // Agregar un nuevo registro al archivo CSV
         await csvWriter.writeRecords([nuevoRegistro]);
         res.status(200).send({ mensaje: 'Registro guardado exitosamente.' });
     } catch (error) {
@@ -46,3 +46,7 @@ const PORT = 3000;
 app.listen(PORT, () => {
     console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
+
+// agrega este middleware al servidor
+const cors = require('cors');
+app.use(cors());
