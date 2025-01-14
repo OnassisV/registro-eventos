@@ -43,7 +43,24 @@ app.post('/guardar-registro', async (req, res) => {
     const nuevoRegistro = req.body;
 
     try {
-        // Agregar un nuevo registro al archivo CSV
+        // Verificar si el archivo ya existe
+        const existeArchivo = fs.existsSync(filePath);
+
+        // Crear un escritor de CSV dinámico (sin sobrescribir encabezados)
+        const csvWriter = createCsvWriter({
+            path: filePath,
+            append: existeArchivo, // Añadir al archivo si ya existe
+            header: [
+                { id: 'fechaPartida', title: 'Fecha de Partida' },
+                { id: 'fechaRetorno', title: 'Fecha de Retorno' },
+                { id: 'asistentes', title: 'Asistentes' },
+                { id: 'departamento', title: 'Departamento' },
+                { id: 'provincia', title: 'Provincia' },
+                { id: 'temas', title: 'Temas Tratados' },
+            ],
+        });
+
+        // Agregar el nuevo registro al archivo CSV
         await csvWriter.writeRecords([nuevoRegistro]);
         res.status(200).send({ mensaje: 'Registro guardado exitosamente.' });
     } catch (error) {
