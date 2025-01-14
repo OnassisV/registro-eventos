@@ -18,6 +18,22 @@
             <label for="fecha-retorno">Fecha de Retorno:</label>
             <input type="date" id="fecha-retorno" required>
             
+            <!-- Responsable -->
+            <label for="responsable">Responsable:</label>
+            <select id="responsable" required>
+                <option value="">Seleccione...</option>
+                <option value="Olinda Martinez">Olinda Martinez</option>
+                <option value="Janet Principe">Janet Principe</option>
+                <option value="Elsa Herrera">Elsa Herrera</option>
+                <option value="Karin Rivas">Karin Rivas</option>
+                <option value="Liliana Puchuri">Liliana Puchuri</option>
+                <option value="Milagros Rafael">Milagros Rafael</option>
+            </select>
+
+            <!-- Nombre de la Actividad -->
+            <label for="nombre-actividad">Nombre de la Actividad:</label>
+            <input type="text" id="nombre-actividad" placeholder="Escriba el nombre de la actividad" required>
+            
             <!-- Asistentes -->
             <label>Asistentes:</label>
             <table id="asistentes-container" class="asistentes-table">
@@ -33,10 +49,22 @@
                 </tr>
                 <tr>
                     <td><label><input type="checkbox" value="Milagros Rafael"> Milagros Rafael</label></td>
-                    <td><label><input type="checkbox" value="Benjamin Paz y Mino"> Benjamin Paz</label></td>
+                    <td><label><input type="checkbox" value="Chrystian Varillas"> Chrystian Varillas</label></td>
+                    <td><label><input type="checkbox" value="Joshua Ushinahua"> Joshua Ushinahua</label></td>
+                </tr>
+                <tr>
+                    <td><label><input type="checkbox" value="Martin Palacios"> Martin Palacios</label></td>
                 </tr>
             </table>
-            
+
+            <!-- Salida a Regiones -->
+            <label for="salida-regiones">Salida a Regiones:</label>
+            <select id="salida-regiones" required>
+                <option value="">Seleccione...</option>
+                <option value="Sí">Sí</option>
+                <option value="No">No</option>
+            </select>
+
             <!-- Departamento -->
             <label for="departamento">Departamento:</label>
             <select id="departamento" required>
@@ -46,7 +74,6 @@
                 <option value="Apurímac">Apurímac</option>
                 <option value="Arequipa">Arequipa</option>
                 <option value="Ayacucho">Ayacucho</option>
-                <!-- Agregar más departamentos según sea necesario -->
             </select>
             
             <!-- Provincia -->
@@ -67,86 +94,6 @@
         </form>
         <p id="success-message" class="hidden">¡Evento registrado con éxito!</p>
     </div>
-    <script>
-// Referencias al DOM
-const form = document.getElementById('event-form');
-const successMessage = document.getElementById('success-message');
-const departamentoSelect = document.getElementById('departamento');
-const provinciaSelect = document.getElementById('provincia');
-
-// Datos de departamentos y provincias del Perú
-const provinciasPorDepartamento = {
-    "Amazonas": ["Chachapoyas", "Bagua", "Bongará", "Condorcanqui", "Luya", "Rodríguez de Mendoza", "Utcubamba"],
-    "Áncash": ["Huaraz", "Aija", "Antonio Raimondi", "Asunción", "Bolognesi", "Carhuaz", "Carlos Fermín Fitzcarrald", "Casma", "Corongo", "Huari", "Huarmey", "Huaylas", "Mariscal Luzuriaga", "Ocros", "Pallasca", "Pomabamba", "Recuay", "Santa", "Sihuas", "Yungay"],
-    "Apurímac": ["Abancay", "Andahuaylas", "Antabamba", "Aymaraes", "Cotabambas", "Chincheros", "Grau"],
-    "Arequipa": ["Arequipa", "Camana", "Caraveli", "Castilla", "Caylloma", "Condesuyos", "Islay", "La Unión"],
-    "Ayacucho": ["Huamanga", "Cangallo", "Huanca Sancos", "Huanta", "La Mar", "Lucanas", "Parinacochas", "Páucar del Sara Sara", "Sucre", "Víctor Fajardo", "Vilcas Huamán"],
-    // Agrega más departamentos y provincias según sea necesario
-};
-
-// Manejo del cambio en el departamento
-departamentoSelect.addEventListener('change', () => {
-    const departamentoSeleccionado = departamentoSelect.value;
-    provinciaSelect.innerHTML = '<option value="">Seleccione...</option>'; // Resetear opciones
-
-    if (provinciasPorDepartamento[departamentoSeleccionado]) {
-        provinciasPorDepartamento[departamentoSeleccionado].forEach(provincia => {
-            const option = document.createElement('option');
-            option.value = provincia;
-            option.textContent = provincia;
-            provinciaSelect.appendChild(option);
-        });
-    }
-});
-
-// Manejo del evento de formulario
-form.addEventListener('submit', async function (event) {
-    event.preventDefault(); // Evita el envío estándar del formulario
-
-    // Recopilar datos del formulario
-    const fechaPartida = document.getElementById('fecha-partida').value;
-    const fechaRetorno = document.getElementById('fecha-retorno').value;
-    const asistentes = Array.from(
-        document.querySelectorAll('#asistentes-container input:checked')
-    ).map(input => input.value).join(', ');
-    const departamento = departamentoSelect.value;
-    const provincia = provinciaSelect.value;
-    const temas = document.getElementById('temas').value;
-
-    // Crear un objeto con los datos
-    const evento = {
-        fechaPartida,
-        fechaRetorno,
-        asistentes,
-        departamento,
-        provincia,
-        temas,
-    };
-
-    try {
-        // Enviar datos al backend
-        const response = await fetch('http://localhost:3000/guardar-registro', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(evento),
-        });
-
-        if (response.ok) {
-            console.log('Datos enviados correctamente');
-            successMessage.classList.remove('hidden');
-            setTimeout(() => {
-                successMessage.classList.add('hidden');
-                form.reset(); // Reiniciar el formulario
-                provinciaSelect.innerHTML = '<option value="">Seleccione...</option>'; // Resetear provincias
-            }, 3000);
-        } else {
-            console.error('Error al enviar datos:', await response.text());
-        }
-    } catch (error) {
-        console.error('Error al conectar con el servidor:', error);
-    }
-});
-
-</script>
+    <script src="registro.js"></script>
 </body>
 </html>

@@ -4,21 +4,19 @@ const successMessage = document.getElementById('success-message');
 const departamentoSelect = document.getElementById('departamento');
 const provinciaSelect = document.getElementById('provincia');
 
-// Datos de departamentos y provincias del Perú
+// Datos de departamentos y provincias
 const provinciasPorDepartamento = {
     "Amazonas": ["Chachapoyas", "Bagua", "Bongará", "Condorcanqui", "Luya", "Rodríguez de Mendoza", "Utcubamba"],
-    "Áncash": ["Huaraz", "Aija", "Antonio Raimondi", "Asunción", "Bolognesi", "Carhuaz", "Carlos Fermín Fitzcarrald", "Casma", "Corongo", "Huari", "Huarmey", "Huaylas", "Mariscal Luzuriaga", "Ocros", "Pallasca", "Pomabamba", "Recuay", "Santa", "Sihuas", "Yungay"],
-    "Apurímac": ["Abancay", "Andahuaylas", "Antabamba", "Aymaraes", "Cotabambas", "Chincheros", "Grau"],
-    "Arequipa": ["Arequipa", "Camana", "Caraveli", "Castilla", "Caylloma", "Condesuyos", "Islay", "La Unión"],
-    "Ayacucho": ["Huamanga", "Cangallo", "Huanca Sancos", "Huanta", "La Mar", "Lucanas", "Parinacochas", "Páucar del Sara Sara", "Sucre", "Víctor Fajardo", "Vilcas Huamán"],
-    // Agrega más departamentos y provincias según sea necesario
+    "Áncash": ["Huaraz", "Aija", "Antonio Raimondi", "Asunción", "Bolognesi"],
+    "Apurímac": ["Abancay", "Andahuaylas", "Antabamba", "Aymaraes", "Cotabambas"],
+    "Arequipa": ["Arequipa", "Camana", "Caraveli", "Castilla", "Caylloma"],
+    "Ayacucho": ["Huamanga", "Cangallo", "Huanca Sancos", "Huanta", "La Mar"],
 };
 
-// Manejo del cambio en el departamento
+// Actualización dinámica de provincias
 departamentoSelect.addEventListener('change', () => {
     const departamentoSeleccionado = departamentoSelect.value;
-    provinciaSelect.innerHTML = '<option value="">Seleccione...</option>'; // Resetear opciones
-
+    provinciaSelect.innerHTML = '<option value="">Seleccione...</option>';
     if (provinciasPorDepartamento[departamentoSeleccionado]) {
         provinciasPorDepartamento[departamentoSeleccionado].forEach(provincia => {
             const option = document.createElement('option');
@@ -29,40 +27,50 @@ departamentoSelect.addEventListener('change', () => {
     }
 });
 
-// Manejo del evento de formulario
-form.addEventListener('submit', function (event) {
-    event.preventDefault(); // Evita el envío estándar del formulario
+// Enviar datos al backend
+form.addEventListener('submit', async function (event) {
+    event.preventDefault();
 
-    // Recopilar datos del formulario
     const fechaPartida = document.getElementById('fecha-partida').value;
     const fechaRetorno = document.getElementById('fecha-retorno').value;
-    const asistentes = Array.from(
-        document.querySelectorAll('#asistentes-container input:checked')
-    ).map(input => input.value);
+    const responsable = document.getElementById('responsable').value;
+    const nombreActividad = document.getElementById('nombre-actividad').value;
+    const asistentes = Array.from(document.querySelectorAll('#asistentes-container input:checked')).map(input => input.value).join(', ');
     const departamento = departamentoSelect.value;
     const provincia = provinciaSelect.value;
+    const salidaRegiones = document.getElementById('salida-regiones').value;
     const temas = document.getElementById('temas').value;
 
-    // Crear un objeto con los datos
     const evento = {
-        fechaPartida,
-        fechaRetorno,
-        asistentes,
-        departamento,
-        provincia,
-        temas
+        FECHA_DE_PARTIDA: fechaPartida,
+        FECHA_DE_RETORNO: fechaRetorno,
+        RESPONSABLE: responsable,
+        NOMBRE_DE_LA_ACTIVIDAD: nombreActividad,
+        ASISTENTES: asistentes,
+        DEPARTAMENTO: departamento,
+        PROVINCIA: provincia,
+        SALIDA_A_REGIONES: salidaRegiones,
+        TEMAS_TRATADOS: temas,
     };
 
-    // Guardar los datos (en localStorage por ahora)
-    const registros = JSON.parse(localStorage.getItem('registros')) || [];
-    registros.push(evento);
-    localStorage.setItem('registros', JSON.stringify(registros));
+    try {
+        const response = await fetch('/guardar-registro', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(evento),
+        });
 
-    // Mostrar mensaje de éxito
-    successMessage.classList.remove('hidden');
-    setTimeout(() => {
-        successMessage.classList.add('hidden');
-        form.reset(); // Reiniciar el formulario
-        provinciaSelect.innerHTML = '<option value="">Seleccione...</option>'; // Resetear provincias
-    }, 3000);
+        if (response.ok) {
+            successMessage.classList.remove('hidden');
+            setTimeout(() => {
+                successMessage.classList.add('hidden');
+                form.reset();
+                provinciaSelect.innerHTML = '<option value="">Seleccione...</option>';
+            }, 3000);
+        } else {
+            console.error('Error al guardar los datos:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error en la conexión con el servidor:', error);
+    }
 });
